@@ -1,0 +1,249 @@
+openapi: 3.0.3
+info:
+  title: LeaderApp Auth API
+  version: 1.0.0
+  description: Secure authentication flow using OTP, JWT, and refresh tokens
+
+tags:
+  - name: Authentication
+    description: Endpoints for user onboarding and login
+
+paths:
+  /auth/verifyemail:
+    post:
+      tags: [Authentication]
+      summary: Initiate email verification
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyEmailRequest'
+      responses:
+        '201':
+          description: OTP created and email flagged for verification
+        '409':
+          description: Email already exists
+
+  /auth/sendotp:
+    post:
+      tags: [Authentication]
+      summary: Manually trigger email OTP
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendOtpRequest'
+      responses:
+        '200':
+          description: OTP sent
+        '404':
+          description: Email not found
+
+  /auth/verifyemailotp:
+    post:
+      tags: [Authentication]
+      summary: Verify email OTP
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyOtpRequest'
+      responses:
+        '200':
+          description: Email verified
+        '400':
+          description: Invalid OTP
+
+  /auth/register:
+    post:
+      tags: [Authentication]
+      summary: Submit registration after OTP verified
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '200':
+          description: User registered
+        '409':
+          description: Already registered
+
+  /auth/login:
+    post:
+      tags: [Authentication]
+      summary: Login and receive access/refresh tokens
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Tokens issued
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthTokens'
+        '400':
+          description: Bad credentials or unverified
+
+  /auth/refresh-token:
+    post:
+      tags: [Authentication]
+      summary: Refresh access token using valid refresh token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshTokenRequest'
+      responses:
+        '200':
+          description: Access token refreshed
+        '403':
+          description: Invalid or expired token
+
+  /auth/logout:
+    post:
+      tags: [Authentication]
+      summary: Logout and delete refresh token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LogoutRequest'
+      responses:
+        '200':
+          description: User logged out
+        '400':
+          description: Logout failed
+
+  /auth/view-profile:
+    get:
+      tags: [Authentication]
+      summary: View leader profile by token
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Profile data retrieved
+        '401':
+          description: Unauthorized or invalid token
+
+  /auth/edit-profile:
+    put:
+      tags: [Authentication]
+      summary: Update leader profile
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EditProfileRequest'
+      responses:
+        '200':
+          description: Profile updated
+        '400':
+          description: Invalid input or token
+
+components:
+  schemas:
+    VerifyEmailRequest:
+      type: object
+      required: [email]
+      properties:
+        email:
+          type: string
+          format: email
+
+    SendOtpRequest:
+      type: object
+      required: [email]
+      properties:
+        email:
+          type: string
+          format: email
+
+    VerifyOtpRequest:
+      type: object
+      required: [email, otp]
+      properties:
+        email:
+          type: string
+          format: email
+        otp:
+          type: string
+
+    RegisterRequest:
+      type: object
+      required:
+        - email
+        - password
+        - name
+        - mobile
+        - address
+        - state
+        - pincode
+      properties:
+        email: { type: string }
+        password: { type: string }
+        name: { type: string }
+        mobile: { type: string }
+        address: { type: string }
+        city: { type: string }
+        state: { type: string }
+        pincode: { type: string }
+        profile_image: { type: string, format: binary }
+
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email: { type: string }
+        password: { type: string }
+
+    AuthTokens:
+      type: object
+      properties:
+        accessToken: { type: string }
+        refreshToken: { type: string }
+
+    RefreshTokenRequest:
+      type: object
+      required: [token]
+      properties:
+        token: { type: string }
+
+    LogoutRequest:
+      type: object
+      required: [token]
+      properties:
+        token: { type: string }
+
+    EditProfileRequest:
+      type: object
+      properties:
+        name: { type: string }
+        mobile: { type: string }
+        address: { type: string }
+        city: { type: string }
+        state: { type: string }
+        pincode: { type: string }
+        profile_image: { type: string, format: binary }

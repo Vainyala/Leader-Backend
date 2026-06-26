@@ -1,0 +1,21 @@
+#docker-compose.server.yml
+
+services:
+  leader-server-app:
+    image: leader-server:0.1
+    container_name: leader-server
+    restart: unless-stopped
+    environment:
+      TZ: Asia/Kolkata
+    ports:
+      - "9002:5000"
+    env_file:
+      - .env
+    networks:
+      - pp-net
+    volumes:
+      - /srv/docker/peoplepulsedata:/data/attachments
+
+networks:
+  pp-net:
+    external: true

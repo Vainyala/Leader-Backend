@@ -1,0 +1,25 @@
+# Node modules
+node_modules/
+
+# Environment variables
+.env
+
+# Uploaded images
+uploads/
+
+# Logs
+*.log
+logs/
+npm-debug.log*
+
+# OS-specific
+.DS_Store
+Thumbs.db
+dist/
+coverage/
+
+# IDE-specific
+.vscode/
+.idea/
+*.tar
+firebase-service-account.json
