@@ -1,0 +1,40 @@
+Date: 29 Dec 2025
+===================================================
+
+
+How to package nodejs backend server as a binary?
+
+Follow the below steps:
+
+
+Navigate to project Root Folder and run the commands:
+
+cd project root folder
+
+npm install -g pkg
+
+Check and edit package.json to have following entries:
+
+"bin": "server.js",  ---- This entry
+  
+like:-
+
+
+{
+  "name": "attendance-backendv1",
+  "version": "1.0.0",
+  "description": "Attendance App Backend server with MariaDB for Transaction Processing and MongoDB for Audit Logging",
+  "main": "src/server.js",
+  "bin": "src/server.js",
+.
+.
+...
+
+
+Then run lke:
+
+pkg server.js --targets node16-win-x64 --output attendancebackendv1.exe
+
+Then check the .exe file and zip it for distribution
+
+
