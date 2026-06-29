@@ -18,7 +18,7 @@ exports.fetchMembercoordinates = async (req, res, next) => {
   console.log('fetchMembercoordinates: Request Query:', req.query );
   leader_regd_mobile_no = req.query.leader_regd_mobile_no;
   const requestId = req.requestId || 'N/A';
-  const hostUrl = `${process.env.HOST_URL}:${process.env.PORT}`;
+  const hostUrl = `${process.env.HOST_URL}`;
   const field_to_update = 'updatedCoordinates';
 
   logger.info(`[${requestId}] fetchMembercoordinates invoked with leader_regd_mobile_no: ${leader_regd_mobile_no}`);

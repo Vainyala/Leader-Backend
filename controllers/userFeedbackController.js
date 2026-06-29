@@ -88,7 +88,7 @@ exports.addUserFeedback = async (req, res) => {
 exports.fetchUserFeedbacks = async (req, res, next) => {
   const { leader_regd_mobile_no, user_email_id, uf_type } = req.query;
   const requestId = req.requestId || 'N/A';
-  const hostUrl = `${process.env.HOST_URL}:${process.env.PORT}`;
+  const hostUrl = `${process.env.HOST_URL}`;
 
   logger.info(`[${requestId}] fetchUserFeedbacks invoked with leader_regd_mobile_no: ${leader_regd_mobile_no}, user_email_id: ${user_email_id}`);
   logger.debug(`[${requestId}] Host URL resolved as: ${hostUrl}`);
@@ -245,7 +245,7 @@ exports.findUserFeedback = async (req, res) => {
   console.log("findUserFeedback:  Request Query: ", req.query);
   const requestId = req.requestId || 'N/A';
   const { leader_regd_mobile_no, user_email_id, uf_case_no } = req.query;
-  const hostUrl = `${process.env.HOST_URL}:${process.env.PORT}`;
+  const hostUrl = `${process.env.HOST_URL}`;
 
   console.log(`[${requestId}] Host URL resolved as: ${hostUrl}`);
 
@@ -339,7 +339,7 @@ exports.getAllUserFeedbackbyTypenStatus = async (req, res, next) => {
   const { user_type } = req;
   const requestId = req.requestId || 'N/A';
 
-  const hostUrl = `${process.env.HOST_URL}:${process.env.PORT}`;
+  const hostUrl = `${process.env.HOST_URL}`;
 
   logger.info(`[${requestId}] Host URL resolved as: ${hostUrl}`);
 

@@ -2,20 +2,21 @@
 
 services:
   leader-server-app:
-    image: leader-server:0.1
+   # build: .
+    image: leader-server:1.0
     container_name: leader-server
     restart: unless-stopped
     environment:
       TZ: Asia/Kolkata
     ports:
-      - "9002:5000"
+      - "8012:5000"
     env_file:
       - .env
     networks:
-      - pp-net
+      - leader-net
     volumes:
-      - /srv/docker/peoplepulsedata:/data/attachments
+      - /srv/docker/leader/uploads:/data/uploads
 
 networks:
-  pp-net:
+  leader-net:
     external: true

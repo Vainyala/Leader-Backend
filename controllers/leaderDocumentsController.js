@@ -86,7 +86,7 @@ exports.uploadLeaderDocument = async (req, res) => {
 exports.getLeaderDocuments = async (req, res, next) => {
   const { leader_regd_mobile_no: leader_regd_mobile_no, document_type } = req.query;
   const requestId = req.requestId || 'N/A';
-  const hostUrl = `${process.env.HOST_URL}:${process.env.PORT}`;
+  const hostUrl = `${process.env.HOST_URL}`;
 
   logger.info(`[${requestId}] getLeaderDocument invoked with leader_regd_mobile_no: ${leader_regd_mobile_no}, document_type: ${document_type}`);
   logger.debug(`[${requestId}] Host URL resolved as: ${hostUrl}`);

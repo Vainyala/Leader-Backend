@@ -23,3 +23,5 @@ coverage/
 .idea/
 *.tar
 firebase-service-account.json
+Dockerfile
+docker-compose.yml

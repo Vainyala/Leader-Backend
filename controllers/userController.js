@@ -12,7 +12,7 @@ exports.viewProfile = async (req, res) => {
   const { leader_regd_mobile_no, user_email_id } = req.query;
 
   const requestId = req.requestId || 'N/A';
-  const hostUrl = `${process.env.HOST_URL}:${process.env.PORT}`;
+  const hostUrl = `${process.env.HOST_URL}`;
     
   logger.info(`[${requestId}] viewProfile(User) of: ${user_email_id} of: ${leader_regd_mobile_no}`);
   logger.debug(`[${requestId}] Host URL resolved as: ${hostUrl}`);
@@ -151,7 +151,7 @@ exports.viewProfileDocument = async (req, res) => {
   const { leader_regd_mobile_no, user_email_id } = req.query;
 
   const requestId = req.requestId || 'N/A';
-  const hostUrl = `${process.env.HOST_URL}:${process.env.PORT}`;
+  const hostUrl = `${process.env.HOST_URL}`;
     
   logger.info(`[${requestId}] viewProfile(User) of: ${user_email_id} of: ${leader_regd_mobile_no}`);
   logger.debug(`[${requestId}] Host URL resolved as: ${hostUrl}`);
