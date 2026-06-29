@@ -80,7 +80,7 @@ exports.createMediaCorner = async (req, res) => {
 exports.getMediaCorner = async (req, res, next) => {
   const { leader_regd_mobile_no: leader_regd_mobile_no, media_type } = req.query;
   const requestId = req.requestId || 'N/A';
-  const hostUrl = `${process.env.HOST_URL}:${process.env.PORT}`;
+  const hostUrl = `${process.env.HOST_URL}`;
 
   logger.info(`[${requestId}] getMediaCorner invoked with leader_regd_mobile_no: ${leader_regd_mobile_no}, media_type: ${media_type}`);
   logger.debug(`[${requestId}] Host URL resolved as: ${hostUrl}`);

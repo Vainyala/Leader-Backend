@@ -1,5 +1,5 @@
 # Use official Node image
-FROM node:20-alpine
+FROM node:22-alpine
 
 # Set working directory
 WORKDIR /app
@@ -14,7 +14,7 @@ RUN npm install
 COPY . .
 
 # Expose your app port
-EXPOSE 9002
+EXPOSE 8012
 
 # Start the app
 CMD ["npm", "start"]

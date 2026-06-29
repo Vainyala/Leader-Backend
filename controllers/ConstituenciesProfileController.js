@@ -185,7 +185,7 @@ exports.getProfile = async (req, res, next) => {
   let field_to_update = 'updatedCP';
 
   const leader_regd_mobile_no = req.query.leader_regd_mobile_no;
-  const hostUrl = `${process.env.HOST_URL}:${process.env.PORT}`;
+  const hostUrl = `${process.env.HOST_URL}`;
 
   logger.info(`[${requestId}] getProfile invoked with leader_regd_mobile_no: ${leader_regd_mobile_no}`);
   logger.debug(`[${requestId}] Host URL resolved as: ${hostUrl}`);

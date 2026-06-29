@@ -1,3 +1,40 @@
+#misc files
+
+*.exe
+*.zip
+*.yml.bak
+*.tar
+
+
+# Node modules
 node_modules
-.tar
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+
+# volumes
+mongo-data
+uploads
+docs
+logs
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Git and configs
 .git
+.gitignore
+.dockerignore
+
+# IDE/editor files
+.vscode
+.idea
+
+# Tests and local dev files
+coverage
+.env
+.env.mongodb
