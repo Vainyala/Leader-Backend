@@ -55,6 +55,7 @@ exports.createMediaCorner = async (req, res) => {
     }
 
     const exists = await LeaderCoordinates.findOne({ leader_regd_mobile_no: leader_regd_mobile_no });
+    console.log('createMediaCorner: Leader Master Record fetched: ', exists);
     if (!exists) {
       //logger.warn(`[${requestId}] Create failed: No master found for ${data.leader_regd_mobile_no}`);
       logger.warn(`Create failed: No master found for ${leader_regd_mobile_no}`);

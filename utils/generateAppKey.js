@@ -14,19 +14,20 @@ function generateAppKey() {
 module.exports = generateAppKey;
 */
 
+
+
+
 require('dotenv').config();
 const CryptoService = require('../services/cryptoService');
 
-function generateAppKey() {
-  const { ORDER_ID, ORDER_DATE, APP_NAME } = process.env;
-
-  if (!ORDER_ID || !ORDER_DATE || !APP_NAME) {
-    throw new Error('Missing required .env values for app key generation');
+function generateAppKey(orderId, orderDate, appName) {
+  if (!orderId || !orderDate || !appName) {
+    throw new Error('Missing required values for app key generation');
   }
 
-  const raw = `${ORDER_ID}|${ORDER_DATE}|${APP_NAME}`;
+  const raw = `${orderId}|${orderDate}|${appName}`;
   const hash = CryptoService.hash(raw);
-  
+
   console.log('./utils/generateAppKey: Raw String Value:', raw);
   console.log('./utils/generateAppKey: Hash Value:', hash);
 
@@ -34,3 +35,28 @@ function generateAppKey() {
 }
 
 module.exports = generateAppKey;
+
+
+
+
+
+// require('dotenv').config();
+// const CryptoService = require('../services/cryptoService');
+
+// function generateAppKey() {
+//   const { ORDER_ID, ORDER_DATE, APP_NAME } = process.env;
+
+//   if (!ORDER_ID || !ORDER_DATE || !APP_NAME) {
+//     throw new Error('Missing required .env values for app key generation');
+//   }
+
+//   const raw = `${ORDER_ID}|${ORDER_DATE}|${APP_NAME}`;
+//   const hash = CryptoService.hash(raw);
+  
+//   console.log('./utils/generateAppKey: Raw String Value:', raw);
+//   console.log('./utils/generateAppKey: Hash Value:', hash);
+
+//   return hash;
+// }
+
+// module.exports = generateAppKey;

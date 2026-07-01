@@ -64,7 +64,7 @@ exports.createMediaCorner = async (req, res) => {
 
     await mediacorner.save();
       
-    logger.info(`Media Corner data created for ${mediacorner.}`);
+    logger.info(`Media Corner data created for ${mediacorner}`);
     //logger.info(`[${requestId}] Media Corner data created for ${mediacorner.}`);
     res.status(201).json({ message: 'Media Corner data created' });
   } catch (err) {
