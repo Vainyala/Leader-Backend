@@ -2,7 +2,7 @@
 
 services:
   leader-server-app:
-   # build: .
+    build: .
     image: leader-server:1.0
     container_name: leader-server
     restart: unless-stopped

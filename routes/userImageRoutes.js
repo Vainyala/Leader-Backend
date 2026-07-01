@@ -16,7 +16,8 @@ const { uploadUserDocument } = require('../controllers/userImageController');
 // Secure image access route -- 13/09/2025
 router.get('/image', validateAppKey, authenticate, getUserProfileImage);
 
-router.put('/image', uploadUserImage.single('profile_image'), validateAppKey, authenticate, updateUserProfileImage);
+router.put('/image', uploadUserImage.single('profile_image'), validateAppKey, authenticate, 
+updateUserProfileImage);
 //router.put( authenticate, uploadUserImage.single('profile_image'), updateUserProfileImage);
 
 // Secure image access route -- 13/09/2025
