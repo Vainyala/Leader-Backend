@@ -22,6 +22,7 @@ const deleteFile = (relativePath) => {
     logger.info(` Deleted file: ${relativePath}`);
   }
 };
+
 //=============================================================
 exports.createMediaCorner = async (req, res) => {
 
@@ -49,7 +50,12 @@ exports.createMediaCorner = async (req, res) => {
     } else {
       console.log(' Body Params loaded successfully');
     }
-
+    console.log(
+      "Role check:",
+      req.user_type,
+      "User ID:",
+      req.user?.userId
+    );
     if (req.user_type === 'user') {
       return res.status(403).json({ status: 'error', message: 'Alert! Action forbidden' });
     }

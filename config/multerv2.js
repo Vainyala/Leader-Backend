@@ -19,7 +19,10 @@ const fileFilter = (req, file, cb) => {
 const createUploader = (folderName) => {
   const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-      const dir = path.join('uploads', folderName);
+      // Use configured upload base dir if provided (e.g. /app/uploads),
+      // otherwise fall back to workspace-relative 'uploads' folder.
+      const base = process.env.UPLOAD_DIR || 'uploads';
+      const dir = path.join(base, folderName);
 
       // Ensure directory exists
       fs.mkdirSync(dir, { recursive: true });
