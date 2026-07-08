@@ -23,13 +23,14 @@ router.post('/register', upload.single('profile_image'), async (req, res) => {
   }
 });
 */
- // Code for dynamic folder creation and image upload  mapping to multerv2.js
- router.post('/register', uploadProfileImage.single('profile_image'), validateAppKey, async (req, res) => {
+// Code for dynamic folder creation and image upload  mapping to multerv2.js
+router.post('/register', uploadProfileImage.single('profile_image'), validateAppKey, async (req, res) => {
   try {
     //req.body.profile_image = req.file?.path || null;  // Absolute path mapping
     // ✅ Store relative path instead of full system path
     req.body.profile_image = req.file
-      ? path.join('profile_images', req.file.filename)
+      // ? path.join('profile_images', req.file.filename)
+      ? req.file.filename
       : null;
     await authController.register(req, res);
   } catch (error) {

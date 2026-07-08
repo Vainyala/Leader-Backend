@@ -2,7 +2,7 @@
 
 services:
   leader-server-app:
-   # build: .
+    build: .
     image: leader-server:1.0
     container_name: leader-server
     restart: unless-stopped
@@ -15,7 +15,12 @@ services:
     networks:
       - leader-net
     volumes:
-      - /srv/docker/leader/uploads:/data/uploads
+      - /srv/docker/leader/uploads/constituency_images:/app/uploads/constituency_images
+      - /srv/docker/leader/uploads/leader_documents:/app/uploads/leader_documents
+      - /srv/docker/leader/uploads/leader_images:/app/uploads/leader_images
+      - /srv/docker/leader/uploads/media_corner:/app/uploads/media_corner
+      - /srv/docker/leader/uploads/profile_images:/app/uploads/profile_images
+      - /srv/docker/leader/uploads/user_feedbacks:/app/uploads/user_feedbacks
 
 networks:
   leader-net:

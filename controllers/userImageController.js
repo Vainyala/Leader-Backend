@@ -5,7 +5,7 @@ exports.getUserProfileImage = (req, res) => {
   const filename = req.query.profile_image;
   console.log('getUserProfileImage......', filename);
   const currentWorkingDir = process.cwd();
-
+console.log('getUserProfileImage:-> Current Working Directory: ', currentWorkingDir);
   //const imagePath = path.join(__dirname, '..', 'uploads', 'profile_images', filename);
   const imagePath = path.join(currentWorkingDir, 'uploads', 'profile_images', filename);
 
@@ -25,17 +25,18 @@ exports.updateUserProfileImage = async (req, res) => {
     const { user_email_id } = req.body;
     const filename = req.file?.filename;
 
-    console.log('updateUserProfileImage:  Req Body:', req.body, ' Image Filename: ', filename );
+    console.log('updateUserProfileImage:  Req Body:', req.body, ' Image Filename: ', filename);
 
     if (!filename) {
       return res.status(400).json({ error: 'No image file uploaded' });
     }
 
     const updatedUser = await User.findOneAndUpdate(
-      { email: user_email_id },
+      { user_email_id: user_email_id.toLowerCase().trim() },
       { profile_image: filename },
       { new: true, runValidators: true }
     );
+    console.log('updateUserProfileImage: updatedUser: ', updatedUser);
 
     if (!updatedUser) {
       return res.status(404).json({ error: 'User not found for given email ID' });
@@ -46,6 +47,7 @@ exports.updateUserProfileImage = async (req, res) => {
       profile_image: filename
     });
   } catch (error) {
+    console.error('Error updating user profile image:', error.message);
     res.status(400).json({
       error: 'User image update failed',
       details: error.message
@@ -81,7 +83,7 @@ exports.uploadUserDocument = async (req, res) => {
     const { user_email_id } = req.body;
     const filename = req.file?.filename;
 
-    console.log('uploadUserDocument:  Req Body:', req.body, ' Document Filename: ', filename );
+    console.log('uploadUserDocument:  Req Body:', req.body, ' Document Filename: ', filename);
 
     if (!filename) {
       return res.status(400).json({ error: 'No image file uploaded' });

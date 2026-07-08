@@ -22,6 +22,7 @@ const deleteFile = (relativePath) => {
     logger.info(` Deleted file: ${relativePath}`);
   }
 };
+
 //=============================================================
 exports.createMediaCorner = async (req, res) => {
 
@@ -49,12 +50,18 @@ exports.createMediaCorner = async (req, res) => {
     } else {
       console.log(' Body Params loaded successfully');
     }
-
+    console.log(
+      "Role check:",
+      req.user_type,
+      "User ID:",
+      req.user?.userId
+    );
     if (req.user_type === 'user') {
       return res.status(403).json({ status: 'error', message: 'Alert! Action forbidden' });
     }
 
     const exists = await LeaderCoordinates.findOne({ leader_regd_mobile_no: leader_regd_mobile_no });
+    console.log('createMediaCorner: Leader Master Record fetched: ', exists);
     if (!exists) {
       //logger.warn(`[${requestId}] Create failed: No master found for ${data.leader_regd_mobile_no}`);
       logger.warn(`Create failed: No master found for ${leader_regd_mobile_no}`);
