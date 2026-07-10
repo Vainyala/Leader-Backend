@@ -1,11 +1,24 @@
 const User = require('../models/User');
 const path = require('path');
+const fs = require("fs").promises;
+// 09/07/2026 --------
+const deleteFile = async (fullPath) => {
+  try {
+    await fs.unlink(fullPath);
+    console.log(`Deleted file: ${fullPath}`);
+  } catch (err) {
+    if (err.code === 'ENOENT') {
+      console.log(`File not found: ${fullPath}`);
+    } else {
+      console.log(`Failed to delete file ${fullPath}: ${err.message}`);
+    }
+  }
+};
 
 exports.getUserProfileImage = (req, res) => {
   const filename = req.query.profile_image;
   console.log('getUserProfileImage......', filename);
   const currentWorkingDir = process.cwd();
-
 
   console.log('getUserProfileImage:-> Current Working Directory: ', currentWorkingDir);
   //const imagePath = path.join(__dirname, '..', 'uploads', 'profile_images', filename);
@@ -23,9 +36,10 @@ exports.getUserProfileImage = (req, res) => {
 
 // Upload User Profile Image
 exports.updateUserProfileImage = async (req, res) => {
+  let filename; 
   try {
     const { user_email_id } = req.body;
-    const filename = req.file?.filename;
+    filename = req.file?.filename;
 
     console.log('updateUserProfileImage:  Req Body:', req.body, ' Image Filename: ', filename);
 
@@ -36,20 +50,47 @@ exports.updateUserProfileImage = async (req, res) => {
     const updatedUser = await User.findOneAndUpdate(
       { user_email_id: user_email_id.toLowerCase().trim() },
       { profile_image: filename },
-      { new: true, runValidators: true }
+      { new: false, runValidators: true }
     );
     console.log('updateUserProfileImage: updatedUser: ', updatedUser);
 
-    if (!updatedUser) {
-      return res.status(404).json({ error: 'User not found for given email ID' });
+   if (!updatedUser) {
+      // Delete newly uploaded image because user doesn't exist
+      const newImagePath = path.resolve(
+        process.env.PROFILE_IMAGES_PATH,
+        filename
+      );
+      await deleteFile(newImagePath);
+
+      return res.status(404).json({
+        error: 'User not found for given email ID'
+      });
     }
 
+    // 09/07/2026 ---- Update successfull -- Delete old image as new image uploaded
+    if (filename && updatedUser.profile_image) {
+      const oldImagePath = path.resolve(process.env.PROFILE_IMAGES_PATH, 
+        updatedUser.profile_image);
+      await deleteFile(oldImagePath)
+    }
+    
     res.status(200).json({
       message: 'User profile image updated successfully',
       profile_image: filename
     });
   } catch (error) {
     console.error('Error updating user profile image:', error.message);
+
+      // Delete newly uploaded image if DB update failed
+    if (filename) {
+      const newImagePath = path.resolve(
+        process.env.PROFILE_IMAGES_PATH,
+        filename
+      );
+
+      await deleteFile(newImagePath);
+    }
+
     res.status(400).json({
       error: 'User image update failed',
       details: error.message

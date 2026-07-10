@@ -61,17 +61,17 @@ exports.updateLeaderProfileImage = async (req, res) => {
     if (!filename) {
       return res.status(400).json({ error: 'No image file uploaded' });
     }
-
+console.log('updateLeaderProfileImage: Image Filename: ', filename );
     if (req.user_type === 'user') {
       return res.status(403).json({ status: 'error', message: 'Alert! Action forbidden' });
     }
-
 
     const updatedLeader = await LeaderCoordinates.findOneAndUpdate(
       { leader_regd_mobile_no },
       { leader_photo: filename },
       { new: false, runValidators: true }
     );  // Notice: new: changed to false from true
+console.log('updateLeaderProfileImage:  Updated Leader: ', updatedLeader);
 
     if (!updatedLeader) {
       return res.status(404).json({ error: 'Leader not found for given mobile number' });
@@ -83,7 +83,8 @@ exports.updateLeaderProfileImage = async (req, res) => {
    
     // 09/07/2026 ---- Update successfull -- Delete old image as new image uploaded
     if (filename && updatedLeader.leader_photo) {
-      const oldImagePath = path.resolve(process.env.LEADER_COORDINATES_PATH, updatedLeader.leader_photo);
+      const oldImagePath = path.resolve(process.env.LEADER_COORDINATES_PATH, 
+        updatedLeader.leader_photo);
       await deleteFile(oldImagePath)
     }
     // -----------------------------------
