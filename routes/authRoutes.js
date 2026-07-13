@@ -27,7 +27,7 @@ router.post('/register', upload.single('profile_image'), async (req, res) => {
 router.post('/register', uploadProfileImage.single('profile_image'), validateAppKey, async (req, res) => {
   try {
     //req.body.profile_image = req.file?.path || null;  // Absolute path mapping
-    // ✅ Store relative path instead of full system path
+    //  Store relative path instead of full system path
     req.body.profile_image = req.file
       // ? path.join('profile_images', req.file.filename)
       ? req.file.filename
@@ -43,6 +43,7 @@ router.post('/verifyemail', validateAppKey, authController.verifyEmail);
 router.post('/sendotp', validateAppKey, authController.sendOTP);
 router.post('/verifyemailotp', validateAppKey, authController.verifyEmailOTP);
 
+router.post('/adminlogin', authController.adminLogin);
 router.post('/login', validateAppKey, authController.login);
 router.post('/refreshtoken', validateAppKey, authenticate, authController.refreshToken);
 router.post('/logout', validateAppKey, authenticate, authController.logout);

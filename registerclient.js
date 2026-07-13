@@ -115,6 +115,7 @@ const user = new User({
   twitter,
   instagram,
   password: hashedPassword,
+  user_type:'admin',
   isEmailVerified: true,
   isEmailOTPVerified: true
 });
@@ -130,7 +131,7 @@ if (existingUser) {
 
 await user.save();
 
-console.log('✅ Admin user created successfully.');
+console.log(' Admin user created successfully.');
 
 
     console.log(` Saved AppOwnerInfo with app_key: ${app_key}`);
@@ -146,6 +147,7 @@ console.log('✅ Admin user created successfully.');
     await mongoose.disconnect();
   }
 })();
+
 
 
 
