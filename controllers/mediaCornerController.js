@@ -9,7 +9,6 @@ const LeaderCoordinates = require('../models/LeaderCoordinates');
 
 const fs = require('fs');
 const path = require('path');
-const ConstituencyProfile = require('../models/mediaCorner');
 const logger = require('../utils/logger');
 const { logFileChange } = require('../utils/auditLogger');
 const mediaCorner = require('../models/mediaCorner');
@@ -39,7 +38,9 @@ exports.createMediaCorner = async (req, res) => {
       media_narration,
       media_url,
       media_type,
-      media_file
+      media_file,
+      custom_text,
+      user_input
     } = req.body;
 
     console.log('createMediaCorner: media_file: ', media_file);
@@ -50,6 +51,16 @@ exports.createMediaCorner = async (req, res) => {
     } else {
       console.log(' Body Params loaded successfully');
     }
+    if (
+      media_type === 'LN' &&
+      user_input === 'yes' &&
+      (!custom_text || !custom_text.trim())
+    ) {
+      return res.status(400).json({
+        message:
+          'custom_text is required when media_type is LN and user_input is yes'
+      });
+    }
     console.log(
       "Role check:",
       req.user_type,
@@ -59,7 +70,7 @@ exports.createMediaCorner = async (req, res) => {
     if (req.user_type === 'user') {
       return res.status(403).json({ status: 'error', message: 'Alert! Action forbidden' });
     }
-
+const mediaFilePath = req.file ? req.file.filename : null;
     const exists = await LeaderCoordinates.findOne({ leader_regd_mobile_no: leader_regd_mobile_no });
     console.log('createMediaCorner: Leader Master Record fetched: ', exists);
     if (!exists) {
@@ -74,7 +85,9 @@ exports.createMediaCorner = async (req, res) => {
       media_narration,
       media_url,
       media_type,
-      media_file
+      media_file,
+      custom_text,
+      user_input
     });
 
     await mediacorner.save();
