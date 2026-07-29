@@ -22,21 +22,71 @@ const AppGrievCompSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 // Auto-generate regn_no before saving
-AppGrievCompSchema.pre('save', async function (next) {
+// AppGrievCompSchema.pre('save', async function (next) {
+//   if (this.regn_no) return next();
+
+//   try {
+//     let tracker = await SerialTracker.findOne({ key: 'griev' });
+
+//     if (!tracker) {
+//       tracker = await SerialTracker.create({ key: 'griev', last_serial: 9999 });
+//     }
+
+//     tracker.last_serial += 1;
+//     await tracker.save();
+
+//     this.regn_no = `griev${tracker.last_serial}`;
+//     next();
+//   } catch (err) {
+//     next(err);
+//   }
+// });
+
+AppGrievCompSchema.pre("save", async function (next) {
   if (this.regn_no) return next();
 
   try {
-    let tracker = await SerialTracker.findOne({ key: 'griev' });
+
+    let key = "";
+    let prefix = "";
+
+    switch ((this.request_type || "").toLowerCase()) {
+
+      case "grievance":
+        key = "griev";
+        prefix = "griev";
+        break;
+
+      case "appeal":
+        key = "appe";
+        prefix = "appe";
+        break;
+
+      case "complaint":
+        key = "compl";
+        prefix = "compl";
+        break;
+
+      default:
+        return next(new Error("Invalid request_type"));
+    }
+
+    let tracker = await SerialTracker.findOne({ key });
 
     if (!tracker) {
-      tracker = await SerialTracker.create({ key: 'griev', last_serial: 9999 });
+      tracker = await SerialTracker.create({
+        key,
+        last_serial: 9999
+      });
     }
 
     tracker.last_serial += 1;
     await tracker.save();
 
-    this.regn_no = `griev${tracker.last_serial}`;
+    this.regn_no = `${prefix}${tracker.last_serial}`;
+
     next();
+
   } catch (err) {
     next(err);
   }

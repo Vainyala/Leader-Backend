@@ -20,7 +20,7 @@ const userSchema = new mongoose.Schema({
   instagram: String,
   password: String,
   email_otp: String,
-  user_type: { type: String, required: true, Enum: ['admin', 'user'], Default: 'user' },
+  user_type: { type: String, required: true, enum: ['admin', 'user'], default: 'user' },
   isEmailVerified: { type: Boolean, default: false },
   isEmailOTPVerified: { type: Boolean, default: false },
   fcm_token: {type: String,default: null},

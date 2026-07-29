@@ -6,7 +6,17 @@ exports.getAllPincodes = async (req, res) => {
   console.log('getAllPincodes: Request Params:', req.params );
   try {
     const pincodes = await Pincode.find();
-    res.status(200).json(pincodes);
+    if (result.length === 0) {
+    return res.status(404).json({
+        success: false,
+        message: "Pincode not found"
+    });
+}
+
+return res.status(200).json({
+    success: true,
+    data: result
+});
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
