@@ -70,6 +70,7 @@ const fcmRoutes = require('./routes/fcmRoutes');
 const leaderImageRoutes = require('./routes/leaderImageRoutes');
 const leaderTimelineRoutes = require('./routes/leaderTimelineRoutes');
 
+const LeaderSplashMsgAnnouncementRoutes = require('./routes/LeaderSplashMsgAnnouncementRoutes');
 const constituencyProfileRoutes = require('./routes/constituencyProfileRoutes');
 const assemblyConstituenciesRoutes = require('./routes/assemblyConstituenciesRoutes');
 const auditRoutes = require('./routes/auditRoutes');
@@ -217,6 +218,7 @@ app.use('/userfeedbacks', express.static(userFeedbackPath));
 // 15-06-2026 -- notification routes
 app.use("/api/notification", notificationRoutes);
 app.use("/api/fcm", fcmRoutes);
+app.use("/api/splash", LeaderSplashMsgAnnouncementRoutes); // 23/12/2025 -- Splash Click and Announcements
 // Bootstrap API entries - 18 Aug 2025
 app.use(useragent.express());
 app.use('/api/bootstrap', bootstrapRouter);

@@ -219,7 +219,6 @@ await sendGreeting(
 };
 
 
-
 // Register a new user for a given leader_regd_mobile_no
  exports.register = async (req, res) => {
 
@@ -374,14 +373,20 @@ exports.login = async (req, res) => {
 
     //const accessToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '5m' });
     const accessToken = jwt.sign(
-      { userId: user._id }, 
+      { userId: user._id,
+        leader_regd_mobile_no,
+        email: user.user_email_id,
+       }, 
       process.env.JWT_SECRET, 
       { expiresIn: process.env.ACCESS_TOKEN_EXPIRE_IN }
     );
     
     //const refreshToken = jwt.sign({ userId: user._id }, process.env.REFRESH_SECRET, { expiresIn: '7d' });
     const refreshToken = jwt.sign(
-      { userId: user._id }, 
+      { userId: user._id,
+        leader_regd_mobile_no,
+        email: user.user_email_id
+      }, 
       process.env.REFRESH_SECRET, 
       { expiresIn: process.env.REFRESH_TOKEN_EXPIRE_IN }
     );
@@ -420,7 +425,7 @@ exports.adminLogin = async (req, res) => {
       user_type : 'admin',
       user_email_id: email.toLowerCase().trim() 
     });
-    
+    console.log('adminLogin API: user fetched: ', user);
     if (!user ) {
       console.log('login API: Admin Email id is not found / not verified');
       return res.status(400).json({ message: 'Admin User not found.' });
@@ -437,6 +442,7 @@ exports.adminLogin = async (req, res) => {
 
     // User is not logged in so proceed to login
     const isMatch = await bcrypt.compare(password, user.password);
+    console.log('adminLogin API: isMatch: ', isMatch);
     if (!isMatch) return res.status(401).json({ message: 'Incorrect password' });
 
     // user email found andpassword verified so proceed to generate token and share json response
