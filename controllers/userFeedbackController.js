@@ -33,7 +33,8 @@ exports.addUserFeedback = async (req, res) => {
     console.log('addUserFeedback:-> Request Body:', req.body);
 
 
-    if (!req.body.leader_regd_mobile_no || !req.body.user_email_id || !req.body.uf_subject || !req.body.uf_desc || !req.body.uf_type) {
+    if (!req.body.leader_regd_mobile_no || !req.body.user_email_id || 
+      !req.body.uf_subject || !req.body.uf_desc || !req.body.uf_type) {
       console.log('Missing required params....');
       return res.status(404).json({ status: 'error', message: 'Alert! Missing required params....' });
     }

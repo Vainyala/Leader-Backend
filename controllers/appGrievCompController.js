@@ -364,32 +364,234 @@ exports.getAllAppGrievCompbyTypenStatus = async (req, res, next) => {
   try {
     const { user_type } = req;
 
-    const { leader_regd_mobile_no, user_email_id, request_type, status } = req.query;
+    const {
+      leader_regd_mobile_no,
+      user_email_id,
+      request_type,
+      status
+    } = req.query;
+
     console.log('Request Query Params:', req.query);
 
-    if (!leader_regd_mobile_no || !user_email_id || !request_type || !status) {
-      return res.status(400).json({ error: 'Missing required query parameters' });
-    }
-    console.log('Query Filter:', { leader_regd_mobile_no, user_email_id, request_type, status });
+    // ---------------------------------------------------------
+    // Required parameters
+    // ---------------------------------------------------------
 
-    const query = getDynamicQuery(user_type, leader_regd_mobile_no, user_email_id);
+    if (
+      !leader_regd_mobile_no ||
+      !user_email_id ||
+      !request_type
+    ) {
+      return res.status(400).json({
+        error:
+          'leader_regd_mobile_no, user_email_id and request_type are required'
+      });
+    }
+
+    console.log('Query Filter:', {
+      leader_regd_mobile_no,
+      user_email_id,
+      request_type,
+      status
+    });
+
+    // ---------------------------------------------------------
+    // Dynamic user query
+    // ---------------------------------------------------------
+
+    const query = getDynamicQuery(
+      user_type,
+      leader_regd_mobile_no,
+      user_email_id
+    );
+
     if (!query) {
-      return res.status(403).json({ message: 'Unauthorized user type' });
-    } else {
-      console.log('getAllAppGrievCompbyTypenStatus->dynamic query: ', query);
+      return res.status(403).json({
+        message: 'Unauthorized user type'
+      });
     }
 
-    const finalQuery = { ...query, request_type, status };
+    // ---------------------------------------------------------
+    // Build final query
+    // ---------------------------------------------------------
+
+    const finalQuery = {
+      ...query,
+      request_type
+    };
+
+    // IMPORTANT:
+    // Only add status when it is actually provided.
+    //
+    // If status is NOT provided:
+    //     Appeal     -> all Appeal records
+    //     Grievance  -> all Grievance records
+    //     Complaints -> all Complaints records
+    //
+    // If status is provided:
+    //     Appeal + Open -> only Open Appeals
+    //     Appeal + Resolved -> only Resolved Appeals
+    // etc.
+
+    if (
+      status !== undefined &&
+      status !== null &&
+      String(status).trim() !== ''
+    ) {
+      finalQuery.status = String(status).trim();
+    }
+
     console.log('📄 Final Query:', finalQuery);
 
-    const entries = await AppGrievComp.find(finalQuery).sort({ createdAt: -1 });
+    // ---------------------------------------------------------
+    // Fetch records
+    // ---------------------------------------------------------
 
-    no_docs = entries.length;
-    console.log('Total # Documents found: ', no_docs);
+    const entries = await AppGrievComp
+      .find(finalQuery)
+      .sort({ createdAt: -1 });
 
-    res.status(200).json(entries);
+    const no_docs = entries.length;
+
+    console.log(
+      'Total # Documents found:',
+      no_docs
+    );
+
+    return res.status(200).json(entries);
+
   } catch (err) {
-    logger.error(`Fetching Appointments failed: ${err.message}`);
+
+    logger.error(
+      `Fetching Appointments failed: ${err.message}`
+    );
+
     next(err);
   }
 };
+// exports.getAllAppGrievCompbyTypenStatus = async (req, res, next) => {
+//   try {
+//     const { user_type } = req;
+
+//     const {
+//       leader_regd_mobile_no,
+//       user_email_id,
+//       request_type,
+//       status
+//     } = req.query;
+
+//     console.log('Request Query Params:', req.query);
+
+//     // ----------------------------------------------------------
+//     // Required parameters
+//     // ----------------------------------------------------------
+
+//     if (
+//       !leader_regd_mobile_no ||
+//       !user_email_id ||
+//       !request_type
+//     ) {
+//       return res.status(400).json({
+//         error: 'Missing required query parameters'
+//       });
+//     }
+
+//     console.log('Query Filter:', {
+//       leader_regd_mobile_no,
+//       user_email_id,
+//       request_type,
+//       status
+//     });
+
+
+//     // ----------------------------------------------------------
+//     // Get user-specific query
+//     // ----------------------------------------------------------
+
+//     const query = getDynamicQuery(
+//       user_type,
+//       leader_regd_mobile_no,
+//       user_email_id
+//     );
+
+
+//     if (!query) {
+//       return res.status(403).json({
+//         message: 'Unauthorized user type'
+//       });
+//     }
+
+
+//     console.log(
+//       'getAllAppGrievCompbyTypenStatus -> dynamic query:',
+//       query
+//     );
+
+
+//     // ----------------------------------------------------------
+//     // Build final query
+//     // ----------------------------------------------------------
+
+//     const finalQuery = {
+//       ...query,
+//       request_type
+//     };
+
+
+//     // ----------------------------------------------------------
+//     // STATUS IS OPTIONAL
+//     //
+//     // If status is provided:
+//     //     filter by that status
+//     //
+//     // If status is not provided:
+//     //     don't add status to query
+//     //     => all statuses will be returned
+//     // ----------------------------------------------------------
+
+//     if (
+//       status !== undefined &&
+//       status !== null &&
+//       String(status).trim() !== ''
+//     ) {
+//       finalQuery.status = status;
+//     }
+
+
+//     console.log(
+//       '📄 Final Query:',
+//       finalQuery
+//     );
+
+
+//     // ----------------------------------------------------------
+//     // Fetch documents
+//     // ----------------------------------------------------------
+
+//     const entries =
+//       await AppGrievComp
+//         .find(finalQuery)
+//         .sort({
+//           createdAt: -1
+//         });
+
+
+//     const no_docs = entries.length;
+
+//     console.log(
+//       'Total # Documents found:',
+//       no_docs
+//     );
+
+
+//     return res.status(200).json(entries);
+
+//   } catch (err) {
+
+//     logger.error(
+//       `Fetching Appointments failed: ${err.message}`
+//     );
+
+//     next(err);
+//   }
+// };
