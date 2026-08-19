@@ -21,27 +21,6 @@ const AppGrievCompSchema = new mongoose.Schema({
   device_ip_number: String
 }, { timestamps: true });
 
-// Auto-generate regn_no before saving
-// AppGrievCompSchema.pre('save', async function (next) {
-//   if (this.regn_no) return next();
-
-//   try {
-//     let tracker = await SerialTracker.findOne({ key: 'griev' });
-
-//     if (!tracker) {
-//       tracker = await SerialTracker.create({ key: 'griev', last_serial: 9999 });
-//     }
-
-//     tracker.last_serial += 1;
-//     await tracker.save();
-
-//     this.regn_no = `griev${tracker.last_serial}`;
-//     next();
-//   } catch (err) {
-//     next(err);
-//   }
-// });
-
 AppGrievCompSchema.pre("save", async function (next) {
   if (this.regn_no) return next();
 
@@ -93,4 +72,30 @@ AppGrievCompSchema.pre("save", async function (next) {
 });
 
 module.exports = mongoose.model('AppGrievComp', AppGrievCompSchema);
+
+
+
+
+
+// Auto-generate regn_no before saving
+// AppGrievCompSchema.pre('save', async function (next) {
+//   if (this.regn_no) return next();
+
+//   try {
+//     let tracker = await SerialTracker.findOne({ key: 'griev' });
+
+//     if (!tracker) {
+//       tracker = await SerialTracker.create({ key: 'griev', last_serial: 9999 });
+//     }
+
+//     tracker.last_serial += 1;
+//     await tracker.save();
+
+//     this.regn_no = `griev${tracker.last_serial}`;
+//     next();
+//   } catch (err) {
+//     next(err);
+//   }
+// });
+
 
