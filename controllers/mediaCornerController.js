@@ -12,7 +12,7 @@ const path = require('path');
 const logger = require('../utils/logger');
 const { logFileChange } = require('../utils/auditLogger');
 const mediaCorner = require('../models/mediaCorner');
-
+const notificationService = require('../services/notificationService');
 // 🧹 Helper to delete file from disk
 const deleteFile = (relativePath) => {
   const fullPath = path.join(__dirname, '..', 'uploads', 'media_corner', relativePath);
@@ -93,7 +93,7 @@ const mediaFilePath = req.file ? req.file.filename : null;
     await mediacorner.save();
 
     const User = require('../models/User');
-    const notificationService = require('../services/notificationService');
+    
 
     try {
 
