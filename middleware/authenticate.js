@@ -47,7 +47,8 @@ module.exports = async function authenticate(req, res, next) {
 
     // Validate leader number
     if (user.leader_regd_mobile_no !== leader_regd_mobile_no) {
-      console.log("authenticate.js:  Invalid leader_regd_mobile_no: \nInput Number: ", leader_regd_mobile_no, "Number fetched from DB: ", user.leader_regd_mobile_no);
+      console.log("authenticate.js:  Invalid leader_regd_mobile_no: \nInput Number: ",
+        leader_regd_mobile_no, "Number fetched from DB: ", user.leader_regd_mobile_no);
       return res.status(401).json({ message: 'Unauthorized: leader number mismatch' });
     }
     
