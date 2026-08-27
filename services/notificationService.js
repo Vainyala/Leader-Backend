@@ -1,47 +1,3 @@
-// const admin = require("firebase-admin");
-// console.log("admin:",admin);
-// const path = require("path");
-
-// const serviceAccount = require(
-//   path.resolve(process.env.FIREBASE_SERVICE_ACCOUNT)
-// );
-
-// try {
-//   admin.app();
-//   console.log("Firebase Admin already initialized.");
-// } catch (error) {
-//   console.log("Initializing Firebase Admin...", error);
-//   admin.initializeApp({
-//     credential: admin.cert(serviceAccount),
-//   });
-// }
-
-// const sendNotification = async ({
-//   token,
-//   title,
-//   body,
-//   type = "general",
-// }) => {
-//   const message = {
-//     token,
-//     notification: {
-//       title,
-//       body,
-//     },
-//     data: {
-//       type,
-//       title,
-//       body,
-//     },
-//     android: {
-//       priority: "high",
-//     },
-//   };
-// console.log("Sending notification:", message);
-//   return await admin.messaging().send(message);
-// };
-
-// module.exports = { sendNotification };
 
 const path = require("path");
 
@@ -56,22 +12,9 @@ const {
 } = require("firebase-admin/messaging");
 
 
-/*
-|--------------------------------------------------------------------------
-| Firebase Service Account
-|--------------------------------------------------------------------------
-*/
-
 const serviceAccount = require(
   path.resolve(process.env.FIREBASE_SERVICE_ACCOUNT)
 );
-
-
-/*
-|--------------------------------------------------------------------------
-| Initialize Firebase Admin
-|--------------------------------------------------------------------------
-*/
 
 let firebaseApp;
 
@@ -190,6 +133,54 @@ module.exports = {
   sendNotification
 };
 
+
+
+
+
+// const admin = require("firebase-admin");
+// console.log("admin:",admin);
+// const path = require("path");
+
+// const serviceAccount = require(
+//   path.resolve(process.env.FIREBASE_SERVICE_ACCOUNT)
+// );
+
+// try {
+//   admin.app();
+//   console.log("Firebase Admin already initialized.");
+// } catch (error) {
+//   console.log("Initializing Firebase Admin...", error);
+//   admin.initializeApp({
+//     credential: admin.cert(serviceAccount),
+//   });
+// }
+
+// const sendNotification = async ({
+//   token,
+//   title,
+//   body,
+//   type = "general",
+// }) => {
+//   const message = {
+//     token,
+//     notification: {
+//       title,
+//       body,
+//     },
+//     data: {
+//       type,
+//       title,
+//       body,
+//     },
+//     android: {
+//       priority: "high",
+//     },
+//   };
+// console.log("Sending notification:", message);
+//   return await admin.messaging().send(message);
+// };
+
+// module.exports = { sendNotification };
 
 
 
