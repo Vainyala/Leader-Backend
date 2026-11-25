@@ -45,7 +45,7 @@ async function getNextClientId() {
     const client_name = await askQuestion('👤 Client Name: ');
     const client_app_name = await askQuestion('👤 Client App Name: ');
     const email = await askQuestion('📧 Client Email: ');
-    const mobile = await askQuestion('📱 Client Mobile: ');
+    const mobile = await askQuestion('📱 Client   Mobile: ');
 
 
     const address = await askQuestion('🏠 Address: ');

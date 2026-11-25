@@ -195,7 +195,9 @@ exports.viewProfileDocument = async (req, res) => {
     console.log('Request Body:', regd_mobile_no, ', ', email);
 
     if (!regd_mobile_no || !email) {
-      return res.status(400).json({ message: 'Missing Body Params: leader_regd_mobile_no / Email is required' });
+      return res.status(400).json({
+         message: 'Missing Body Params: leader_regd_mobile_no / Email is required'
+         });
     }
 
     const registeruser = await User.findOne({
@@ -235,16 +237,21 @@ exports.sendOTP = async (req, res) => {
 
   try {
     const email = req.body.user_email_id;
-
+    const regd_mobile_no = req.body.leader_regd_mobile_no;
+console.log('Request Body:', regd_mobile_no, ', ', email);
     const email_otp = Math.floor(100000 + Math.random() * 900000).toString();
 
-    if (!email) {
-      return res.status(400).json({ message: 'Missing Body Params: Email is required' });
+    if (!email || !regd_mobile_no) {
+      return res.status(400).json({ message: 'Missing Body Params: Email and leader_regd_mobile_no are required' });
     }
 
     console.log("Searching for email:", `"${email}"`);
     console.log("Looking for email:", email);
-    const registeruser = await User.findOne({ user_email_id: email.toLowerCase().trim() });
+    // const registeruser = await User.findOne({ user_email_id: email.toLowerCase().trim() });
+    const registeruser = await User.findOne({
+      leader_regd_mobile_no : regd_mobile_no,
+      user_email_id: email.toLowerCase().trim() 
+    });
     //const registeruser = await Registeruser.findOne({ email: new RegExp(`^${email}$`, 'i') });
     console.log("Found user:", registeruser);
 
@@ -283,12 +290,18 @@ exports.verifyEmailOTP = async (req, res) => {
   try {
     const email = req.body.user_email_id;
     const otp = req.body.otp;
-
-    if (!email || !otp) {
-      return res.status(400).json({ message: 'Missing Body Params: Email and OTP are required' });
+    const regd_mobile_no = req.body.leader_regd_mobile_no;
+console.log('Request Body:', email, ', ', otp);
+    if (!email || !regd_mobile_no || !otp) {
+      return res.status(400).json({ 
+        message: 'Missing Body Params: Email, leader_regd_mobile_no, and OTP are required' });
     }
 
-    const registeruser = await User.findOne( { user_email_id: email.toLowerCase().trim() });
+    // const registeruser = await User.findOne( { user_email_id: email.toLowerCase().trim() });
+const registeruser = await User.findOne({
+      leader_regd_mobile_no : regd_mobile_no,
+      user_email_id: email.toLowerCase().trim() 
+    });
 
     if (!registeruser) {
       return res.status(404).json({ message: 'Email not found' });
@@ -326,51 +339,160 @@ exports.verifyEmailOTP = async (req, res) => {
 
 
 // Forgot Password :   PUT Methods 
-exports.forgotPassword = async (req, res, next) => {
-
-  console.log("forgotPassword: Body:", req.body);
+// exports.forgotPassword = async (req, res, next) => {
   
-  try {
-    const { user_email_id, npassword } = req.body;
-    const email = user_email_id;
+//   try {
+//     const { user_email_id, npassword, leader_regd_mobile_no } = req.body;
+//     console.log("forgotPassword: Body:", req.body);
+//     const email = user_email_id;
+//     const regd_mobile_no = leader_regd_mobile_no;
 
-    console.log('user_email_id from req.body: ', email);
+//     console.log('user_email_id from req.body: ', email);
+//     console.log('leader_regd_mobile_no from req.body: ', regd_mobile_no);
 
-    const user = await User.findOne({ user_email_id: email.toLowerCase().trim() });
+//     const user = await User.findOne({ user_email_id: email.toLowerCase().trim(), 
+//       leader_regd_mobile_no: regd_mobile_no });
+//     console.log('User found for forgot password:', user);
+//     if (!user ) {
+//       return res.status(400).json({ message: 'User not found or not verified' });
+//     }
+
+//     if (!user.isEmailOTPVerified) {
+//        return res.status(400).json({ 
+//         message: 'Alert! Email OTP is not verified, Plz verify Email OTP and then retry' });
+//     }
+
+//     const hashedPassword = await bcrypt.hash(npassword, 10);
     
-    if (!user ) {
-      console.log('User not found or not verified' );
-      return res.status(400).json({ message: 'User not found or not verified' });
+//     // Mark email as verified
+//     user.password = hashedPassword;
+//     user.isEmailOTPVerified = false;  // Update false to avoid calling forgot password api directly
+    
+//     await user.save();
+
+//     console.log('Forgot Password API: isEmailVerified & isEmailotpVerified set to false in Users DB');
+//     const updatedUser = await user.save();
+
+//     if (updatedUser) {
+//         console.log('Password updated successfully');
+//         res.status(200).json({
+//         message: 'Password updated successfully',
+//       });
+//     } else {
+//       console.log('Alert! Password update failed, please retry.');
+//       return res.status(401).json({ message: 'Alert! Password update failed, please retry.' });
+//     }
+//   } catch (err) {
+//     console.error('Forgot Password Error:', err);
+//     res.status(500).json({ message: 'Server error' });
+//   }
+// };
+
+exports.forgotPassword = async (req, res, next) => {
+  try {
+    const {
+      user_email_id,
+      leader_regd_mobile_no,
+      npassword
+    } = req.body;
+console.log("forgotPassword: Body:", req.body);
+    // Validate required parameters
+    if (!user_email_id || !leader_regd_mobile_no || !npassword) {
+      return res.status(400).json({
+        message:
+          'Email, leader_regd_mobile_no and new password are required'
+      });
     }
 
+    const email = user_email_id.toLowerCase().trim();
+    const regd_mobile_no = String(leader_regd_mobile_no).trim();
+
+    console.log('[FORGOT PASSWORD] Email:', email);
+    console.log('[FORGOT PASSWORD] Requested Leader:', regd_mobile_no);
+
+    // Find user registered under the specific leader
+    const user = await User.findOne({
+      user_email_id: email,
+      leader_regd_mobile_no: regd_mobile_no
+    });
+console.log('[FORGOT PASSWORD] User found:', user);
+    if (!user) {
+      return res.status(400).json({
+        message: 'User not found or not verified'
+      });
+    }
+
+    console.log('[FORGOT PASSWORD] Matched User ID:', user._id);
+    console.log(
+      '[FORGOT PASSWORD] Matched Leader:',
+      user.leader_regd_mobile_no
+    );
+
+    // Additional leader validation
+    if (String(user.leader_regd_mobile_no).trim() !== regd_mobile_no) {
+      return res.status(400).json({
+        message: 'Leader mismatch'
+      });
+    }
+
+    // Check OTP verification
     if (!user.isEmailOTPVerified) {
-      console.log('Alert! Email OTP is not verified, Plz verify Email OTP and then retry' );
-      return res.status(400).json({ message: 'Alert! Email OTP is not verified, Plz verify Email OTP and then retry' });
+      return res.status(400).json({
+        message:
+          'Alert! Email OTP is not verified, Plz verify Email OTP and then retry'
+      });
     }
 
     const hashedPassword = await bcrypt.hash(npassword, 10);
-    
-    // Mark email as verified
-    user.password = hashedPassword;
-    user.isEmailOTPVerified = false;  // Update false to avoid calling forgot password api directly
-    
-    await user.save();
 
-    console.log('Forgot Password API: isEmailVerified & isEmailotpVerified set to false in Users DB');
-    const updatedUser = await user.save();
+    // Update only the matched user and consume OTP verification
+    const updatedUser = await User.findOneAndUpdate(
+      {
+        _id: user._id,
+        user_email_id: email,
+        leader_regd_mobile_no: regd_mobile_no,
+        isEmailOTPVerified: true
+      },
+      {
+        $set: {
+          password: hashedPassword,
+          isEmailOTPVerified: false,
+          isEmailVerified: true,
+          email_otp: null
+        }
+      },
+      {
+        new: true,
+        runValidators: true
+      }
+    );
 
-    if (updatedUser) {
-        console.log('Password updated successfully');
-        res.status(200).json({
-        message: 'Password updated successfully',
+    if (!updatedUser) {
+      return res.status(400).json({
+        message: 'Password update failed, please retry'
       });
-    } else {
-      console.log('Alert! Password update failed, please retry.');
-      return res.status(401).json({ message: 'Alert! Password update failed, please retry.' });
     }
+
+    console.log(
+      '[FORGOT PASSWORD] Password updated for User:',
+      updatedUser._id
+    );
+
+    console.log(
+      '[FORGOT PASSWORD] Password updated for Leader:',
+      updatedUser.leader_regd_mobile_no
+    );
+
+    return res.status(200).json({
+      message: 'Password updated successfully'
+    });
+
   } catch (err) {
-    console.error('Forgot Password Error:', err);
-    res.status(500).json({ message: 'Server error' });
+    console.error('[FORGOT PASSWORD] Error:', err.message);
+
+    return res.status(500).json({
+      message: 'Server error'
+    });
   }
 };
 
