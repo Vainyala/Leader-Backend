@@ -12,6 +12,7 @@ const {
   updateTrackerFieldTrue,
   updateTrackerFieldFalse
 } = require('../utils/updateTracker'); // 05/01/2026
+const notificationService = require('../services/notificationService');
   
 // 09/07/2026 --------
 const deleteFile = async (fullPath) => {
@@ -80,6 +81,7 @@ console.log('updateLeaderProfileImage:  Updated Leader: ', updatedLeader);
     // 06/01/2026  -- Implemented update status = True logic 
     // in UpdateTrackerModel and BootstrapLog Collections
     await updateTrackerFieldTrue(leader_regd_mobile_no, 'updatedSM');
+    notificationService.notifyLeaderChange(leader_regd_mobile_no, 'profile photo', 'updated');
    
     // 09/07/2026 ---- Update successfull -- Delete old image as new image uploaded
     if (filename && updatedLeader.leader_photo) {
@@ -123,6 +125,24 @@ console.log('updateLeaderProfileImage:  Updated Leader: ', updatedLeader);
 
 
 
+
+
+
+
+
+
+
+
+
+
+// // /controllers/leaderImageController.js
+
+// // 09/07/2026 --------
+// const { config } = require('dotenv');
+// const fs = require("fs").promises;
+// const path = require("path");
+// // -----------------------------------
+
 // const LeaderCoordinates = require('../models/LeaderCoordinates');
 
 // const { 
@@ -130,7 +150,20 @@ console.log('updateLeaderProfileImage:  Updated Leader: ', updatedLeader);
 //   updateTrackerFieldFalse
 // } = require('../utils/updateTracker'); // 05/01/2026
   
-// const path = require('path');
+// // 09/07/2026 --------
+// const deleteFile = async (fullPath) => {
+//   try {
+//     await fs.unlink(fullPath);
+//     console.log(`Deleted file: ${fullPath}`);
+//   } catch (err) {
+//     if (err.code === 'ENOENT') {
+//       console.log(`File not found: ${fullPath}`);
+//     } else {
+//       console.log(`Failed to delete file ${fullPath}: ${err.message}`);
+//     }
+//   }
+// };
+// // -----------------------------------
 
 // exports.getLeaderProfileImage = async (req, res) => {
 //   const filename = req.query.leader_image;
@@ -155,16 +188,17 @@ console.log('updateLeaderProfileImage:  Updated Leader: ', updatedLeader);
 
 // //Update Leader Profile Image - Leader Coordinates Coordinates
 // exports.updateLeaderProfileImage = async (req, res) => {
+//   let filename;   // 09/07/2026
 //   try {
 //     const leader_regd_mobile_no = req.body.leader_regd_mobile_no;
-//     const filename = req.file?.filename;
+//     filename = req.file?.filename; // Removed const ---- 09/07/2026
 
 //     console.log('updateLeaderProfileImage:  Request Body-LeaderMobile#:', leader_regd_mobile_no, ' Image Filename: ', filename );
 
 //     if (!filename) {
 //       return res.status(400).json({ error: 'No image file uploaded' });
 //     }
-
+// console.log('updateLeaderProfileImage: Image Filename: ', filename );
 //     if (req.user_type === 'user') {
 //       return res.status(403).json({ status: 'error', message: 'Alert! Action forbidden' });
 //     }
@@ -172,26 +206,54 @@ console.log('updateLeaderProfileImage:  Updated Leader: ', updatedLeader);
 //     const updatedLeader = await LeaderCoordinates.findOneAndUpdate(
 //       { leader_regd_mobile_no },
 //       { leader_photo: filename },
-//       { new: true, runValidators: true }
-//     );
+//       { new: false, runValidators: true }
+//     );  // Notice: new: changed to false from true
+// console.log('updateLeaderProfileImage:  Updated Leader: ', updatedLeader);
 
 //     if (!updatedLeader) {
 //       return res.status(404).json({ error: 'Leader not found for given mobile number' });
 //     }
-
+    
 //     // 06/01/2026  -- Implemented update status = True logic 
 //     // in UpdateTrackerModel and BootstrapLog Collections
 //     await updateTrackerFieldTrue(leader_regd_mobile_no, 'updatedSM');
    
+//     // 09/07/2026 ---- Update successfull -- Delete old image as new image uploaded
+//     if (filename && updatedLeader.leader_photo) {
+//       const oldImagePath = path.resolve(process.env.LEADER_COORDINATES_PATH, 
+//         updatedLeader.leader_photo);
+//       await deleteFile(oldImagePath)
+//     }
+//     // -----------------------------------
+    
 //     res.status(200).json({
 //       message: 'Leader profile image updated successfully',
 //       leader_photo: filename
 //     });
 //   } catch (error) {
+
+//     // Delete uploaded image as error occured, so latest image upload failed.
+//       const newImagePath = path.resolve(process.env.LEADER_COORDINATES_PATH, filename);
+//       await deleteFile(newImagePath)
+//     // -----------------------------------
+
+
 //     res.status(400).json({
 //       error: 'Leader image update failed',
 //       details: error.message
 //     });
 //   }
 // };
+
+
+
+
+
+
+
+
+
+
+
+
 
